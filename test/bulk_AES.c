@@ -26,7 +26,6 @@
 #include "justGarble.h"
 
 #include "torabuild.h"
-#include "ot_AES.h"
 
 int main() {
   srand(time(NULL));
@@ -84,36 +83,38 @@ int main() {
 	printbitstream(inputs, 12,128);
   //print input key as well as the keyschedules----------------------------
   */
-
-  struct timeval garble_start;
-  struct timeval garble_stop;
-  struct timeval eval_start;
-  struct timeval eval_stop;
+  struct timeval total_start;
+  struct timeval total_stop;
+  clock_t start,end;
+  double cpu_time_used;
 
   build_JustineAES(&circuit);
 
-  gettimeofday(&garble_start, NULL);
-  garbleCircuit(&circuit, inputLabels, outputMap);
-  gettimeofday(&garble_stop, NULL);
+  int total_instances = 3000;
 
-  setup_AESInput(inputs, plaintext, userkey, n);
+  gettimeofday(&total_start, NULL);
+  start = clock();
+  for(i=0;i<total_instances;i++){
 
-  extractLabels(extractedLabels, inputLabels, inputs, n);
+    garbleCircuit(&circuit, inputLabels, outputMap);
+    setup_AESInput(inputs, plaintext, userkey, n);
+    extractLabels(extractedLabels, inputLabels, inputs, n);
+    evaluate(&circuit, extractedLabels, finalOutput);
+    int outputVals[m];
+    memset(outputVals, 0, sizeof(int) * m);
+    mapOutputs(outputMap, finalOutput, outputVals, m);
 
-  gettimeofday(&eval_start, NULL);
-  evaluate(&circuit, extractedLabels, finalOutput);
-  gettimeofday(&eval_stop, NULL);
+    //printf("AES output (ciphertext):\n");
+  	//printbitstream(outputVals,1,m);
+  }
+  end = clock();
+  gettimeofday(&total_stop, NULL);
 
+  cpu_time_used = ((double) (end-start))/ CLOCKS_PER_SEC;
 
-  int outputVals[m];
-  memset(outputVals, 0, sizeof(int) * m);
-  mapOutputs(outputMap, finalOutput, outputVals, m);
-
-  printf("AES output (ciphertext):\n");
-	printbitstream(outputVals,1,m);
-
-  printf("EVAL TAKES: %lu us\n", eval_stop.tv_usec - eval_start.tv_usec);
-  printf("GARBLE TAKES: %lu us\n", garble_stop.tv_usec - garble_start.tv_usec);
+  //printf("Total time for %d garbling and eval : %lu us\n", total_instances  ,total_stop.tv_usec - total_start.tv_usec);
+  //printf("In seconds : %f\n",(total_stop.tv_usec - total_start.tv_usec) / 1000000.0 );
+  printf("Total time for %d garbling and eval : %f s\n",total_instances,cpu_time_used);
 
   return 0;
 }
