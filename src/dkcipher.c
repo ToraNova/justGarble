@@ -16,9 +16,9 @@
 
 */
 
-#include "../include/dkcipher.h"
-#include "../include/common.h"
-#include "../include/justGarble.h"
+#include "dkcipher.h"
+#include "common.h"
+#include "justGarble.h"
 
 void DKCipher1Init(block *key, DKCipherContext *c) {
 	AES_set_encrypt_key((unsigned char *) key, 128, &c->K);
@@ -62,4 +62,3 @@ void DKCipherKSSDecrypt(block *ctext, block *ptext, block tweak,
 	AES_encrypt((unsigned char *) (&tweak), (unsigned char *) &temp, &K1);
 	*ptext = xorBlocks(*ctext ,temp);
 }
-

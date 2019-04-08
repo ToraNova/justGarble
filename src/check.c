@@ -17,11 +17,11 @@
 */
 
 
-#include "../include/common.h"
-#include "../include/garble.h"
-#include "../include/check.h"
-#include "../include/util.h"
-#include "../include/justGarble.h"
+#include "common.h"
+#include "garble.h"
+#include "check.h"
+#include "jgutil.h"
+#include "justGarble.h"
 
 
 int checkCircuit(GarbledCircuit *garbledCircuit, InputLabels inputLabels,
@@ -73,4 +73,3 @@ unsigned long timedEval(GarbledCircuit *garbledCircuit, InputLabels inputLabels)
 	return sum;
 
 }
-

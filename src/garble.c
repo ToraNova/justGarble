@@ -16,14 +16,14 @@
 
 */
 
-#include "../include/garble.h"
-#include "../include/common.h"
-#include "../include/circuits.h"
-#include "../include/gates.h"
-#include "../include/util.h"
-#include "../include/dkcipher.h"
-#include "../include/aes.h"
-#include "../include/justGarble.h"
+#include "garble.h"
+#include "common.h"
+#include "circuits.h"
+#include "gates.h"
+#include "jgutil.h"
+#include "dkcipher.h"
+#include "aes.h"
+#include "justGarble.h"
 #include <malloc.h>
 #include <stdint.h>
 #include <wmmintrin.h>
@@ -1051,4 +1051,3 @@ int findGatesWithMatchingInputs(GarbledCircuit *garbledCircuit,
 	}
 	return 0;
 }
-

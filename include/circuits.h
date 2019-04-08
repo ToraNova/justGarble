@@ -39,7 +39,7 @@ int XORCircuit(GarbledCircuit *gc, GarblingContext *garblingContext, int n, int*
 int MultiXORCircuit(GarbledCircuit *gc, GarblingContext *garblingContext, int d, int n, int* inputs, int* outputs);
 
 int MINCircuit(GarbledCircuit *gc, GarblingContext *garblingContext, int n, int* inputs, int* outputs);
-
+int NewSBOXCircuit(GarbledCircuit *gc, GarblingContext *garblingContext,int* inputs, int* outputs);
 
 int SBOXNOTABLE(GarbledCircuit *garbledCircuit, GarblingContext *garblingContext, int* inputs, int* outputs);
 int AddRoundKey(GarbledCircuit *gc, GarblingContext *garblingContext, int* inputs, int* outputs);
@@ -64,8 +64,15 @@ int GF4SQCircuit(GarbledCircuit *gc, GarblingContext *garblingContext,  int* inp
 int GF4SCLNCircuit(GarbledCircuit *gc, GarblingContext *garblingContext,  int* inputs, int* outputs);
 int GF4SCLN2Circuit(GarbledCircuit *gc, GarblingContext *garblingContext,  int* inputs, int* outputs);
 
+int GF256InvCircuit(GarbledCircuit *gc, GarblingContext *garblingContext,int* inputs, int* outputs);
+int GF16INVCircuit(GarbledCircuit *gc, GarblingContext *garblingContext,int* inputs, int* outputs);
 int RANDCircuit(GarbledCircuit *garbledCircuit, GarblingContext *garblingContext, int n, int* inputs, int* outputs, int q, int qf);
 
-
+int JustineMulGF256(GarbledCircuit* gc, GarblingContext* garblingContext, int* x, int* y, int* out);
+int JustineMulInverseGF256(GarbledCircuit* gc, GarblingContext* garblingContext, int* x, int* out);
+int JustineSBoxXOR(GarbledCircuit* gc, GarblingContext* garblingContext, int* x, int* out);
+int JustineSBOX(GarbledCircuit* gc, GarblingContext* garblingContext, int* inputs, int* output);
+int JustineMixColumns(GarbledCircuit* gc, GarblingContext* garblingContext,int* inputs, int* output);
+int JustineORCircuit(GarbledCircuit *garbledCircuit, GarblingContext *garblingContext,int n, int* inputs, int* outputs);
+int JustineANDCircuit(GarbledCircuit *garbledCircuit, GarblingContext *garblingContext,int n, int* inputs, int* outputs);
 #endif /* CIRCUITS_H_ */
-

@@ -15,65 +15,31 @@
    along with JustGarble.  If not, see <http://www.gnu.org/licenses/>.
 
 */
-#include <gnutls/gnutls.h>      
-#include <gnutls/x509.h>      
+#include <gnutls/gnutls.h>
+#include <gnutls/x509.h>
 #include <gnutls/crypto.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
 #include <stdint.h>
 #include <time.h>
-#include "../include/justGarble.h"
+#include "justGarble.h"
 
-#include "../include/garble.h"
-#include "../include/common.h"
-#include "../include/circuits.h"
-#include "../include/gates.h"
-#include "../include/util.h"
-#include "../include/dkcipher.h"
-#include "../include/aes.h"
-#include "../include/justGarble.h"
+#include "garble.h"
+#include "common.h"
+#include "circuits.h"
+#include "gates.h"
+#include "jgutil.h"
+#include "dkcipher.h"
+#include "aes.h"
+#include "justGarble.h"
 
-#include "../include/tinyaes.h"
+#include "tinyaes.h"
 
 int *final;
 
 #define AES_CIRCUIT_FILE_NAME "./aesCircuit"
 block* oldOutputMapTest;
-
-
-#define BIGENDHEYO
-void make_uint_array_from_blob(int* dest, unsigned char* blob, uint32_t bloblen)
-{
-  memset(dest, 0, bloblen * 8);
-  int x;
-  for (x = 0; x < bloblen; x++)
-  {
-    unsigned char thisblob = blob[x];
-#ifdef BIGENDHEYO
-    dest[x * 8] = (0x80 & thisblob) == 0x80 ? 1 : 0; 
-    dest[x * 8 + 1] = (0x40 & thisblob) == 0x40 ? 1 : 0; 
-    dest[x * 8 + 2] = (0x20 & thisblob) == 0x20 ? 1 : 0; 
-    dest[x * 8 + 3] = (0x10 & thisblob) == 0x10 ? 1 : 0; 
-    dest[x * 8 + 4] = (0x08 & thisblob) == 0x08 ? 1 : 0; 
-    dest[x * 8 + 5] = (0x04 & thisblob) == 0x04 ? 1 : 0; 
-    dest[x * 8 + 6] = (0x02 & thisblob) == 0x02 ? 1 : 0; 
-    dest[x * 8 + 7] = (0x01 & thisblob) == 0x01 ? 1 : 0; 
-#else
-    dest[x * 8 + 7] = (0x80 & thisblob) == 0x80 ? 1 : 0; 
-    dest[x * 8 + 6] = (0x40 & thisblob) == 0x40 ? 1 : 0; 
-    dest[x * 8 + 5] = (0x20 & thisblob) == 0x20 ? 1 : 0; 
-    dest[x * 8 + 4] = (0x10 & thisblob) == 0x10 ? 1 : 0; 
-    dest[x * 8 + 3] = (0x08 & thisblob) == 0x08 ? 1 : 0; 
-    dest[x * 8 + 2] = (0x04 & thisblob) == 0x04 ? 1 : 0; 
-    dest[x * 8 + 1] = (0x02 & thisblob) == 0x02 ? 1 : 0; 
-    dest[x * 8] = (0x01 & thisblob) == 0x01 ? 1 : 0; 
-
-#endif
-
-  }
-}
 
 void buildAESCircuit() {
   srand(time(NULL));
@@ -109,7 +75,7 @@ void buildAESCircuit() {
 
   long gates = garblingContext.gateIndex;
   AddRoundKey(&garbledCircuit, &garblingContext, addKeyInputs,addKeyOutputs);
-  printf("Round key added %li gates\n", garblingContext.gateIndex - gates);
+  printf("Round key added %lu gates\n", garblingContext.gateIndex - gates);
   gates = garblingContext.gateIndex;
   for (round = 1; round < 11; round++) {
 
@@ -117,14 +83,14 @@ void buildAESCircuit() {
       JustineSBOX(&garbledCircuit, &garblingContext, addKeyOutputs + 8 * i,
           subBytesOutputs + 8 * i);
     }
-     printf("SBOX added %li gates\n", garblingContext.gateIndex - gates);
-    gates = garblingContext.gateIndex; 
+     printf("SBOX added %lu gates\n", garblingContext.gateIndex - gates);
+    gates = garblingContext.gateIndex;
 
 
     ShiftRows(&garbledCircuit, &garblingContext, subBytesOutputs,
         shiftRowsOutputs);
-     printf("ShiftRows added %li gates\n", garblingContext.gateIndex - gates);
-    gates = garblingContext.gateIndex; 
+     printf("ShiftRows added %lu gates\n", garblingContext.gateIndex - gates);
+    gates = garblingContext.gateIndex;
 
     for (i = 0; i < 4; i++) {
       if (round != roundLimit)
@@ -132,7 +98,7 @@ void buildAESCircuit() {
             shiftRowsOutputs + i * 32, mixColumnOutputs + 32 * i);
     }
      printf("MixColumns (%i) added %li gates\n", round, garblingContext.gateIndex - gates);
-    gates = garblingContext.gateIndex; 
+    gates = garblingContext.gateIndex;
 
     for (i = 0; i < 128; i++) {
       if(round != roundLimit) addKeyInputs[i] = mixColumnOutputs[i];
@@ -142,10 +108,10 @@ void buildAESCircuit() {
 
     AddRoundKey(&garbledCircuit, &garblingContext, addKeyInputs,addKeyOutputs);
     printf("Round key added %li gates\n", garblingContext.gateIndex - gates);
-    gates = garblingContext.gateIndex; 
+    gates = garblingContext.gateIndex;
   }
-  
-  final = addKeyOutputs; 
+
+  final = addKeyOutputs;
     finishBuilding(&garbledCircuit, &garblingContext, outputMap, final);
 
    struct timeval garble_start;
@@ -196,9 +162,9 @@ void buildAESCircuit() {
   printf("THEIR CODE:\n");
   AES_encrypt(input_aes, output_aes, &key);
   int aes_output_int[128];
-  make_uint_array_from_blob(aes_output_int, output_aes, 16); 
+  make_uint_array_from_blob(aes_output_int, output_aes, 16);
   for(x = 0; x < 128; x++) printf("%u", aes_output_int[x]);
-  printf("\n\n"); 
+  printf("\n\n");
 
   printf("GNUTLS:\n");
   gnutls_global_init();
@@ -209,7 +175,7 @@ void buildAESCircuit() {
   //gtlskey.size = 0;
   gtlskey.size = sizeof(__m128i);
   gnutls_datum_t* iv = NULL;
-  int res = gnutls_cipher_init(&aes_handle, cipher, &gtlskey, iv); 
+  int res = gnutls_cipher_init(&aes_handle, cipher, &gtlskey, iv);
 
 
   unsigned char output_gnutls[128];
@@ -243,8 +209,8 @@ void buildAESCircuit() {
 
   //writeCircuitToFile(&garbledCircuit, AES_CIRCUIT_FILE_NAME);
 
-  printf("EVAL TAKES: %u us\n", eval_stop.tv_usec - eval_start.tv_usec);
-  printf("GARBLE TAKES: %u us\n", garble_stop.tv_usec - garble_start.tv_usec);
+  printf("EVAL TAKES: %lu us\n", eval_stop.tv_usec - eval_start.tv_usec);
+  printf("GARBLE TAKES: %lu us\n", garble_stop.tv_usec - garble_start.tv_usec);
 }
 
 int main() {
@@ -260,4 +226,3 @@ int main() {
   exit(5);
   return 0;
 }
-

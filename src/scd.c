@@ -17,9 +17,9 @@
 */
 
 
-#include "../include/common.h"
-#include "../include/garble.h"
-#include "../include/justGarble.h"
+#include "common.h"
+#include "garble.h"
+#include "justGarble.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -142,4 +142,3 @@ int readCircuitFromFile(GarbledCircuit *garbledCircuit, char *fileName) {
 	}
 	return SUCCESS;
 }
-

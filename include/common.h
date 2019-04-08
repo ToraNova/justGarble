@@ -111,9 +111,8 @@ int __itc;
 char *__itc_src;
 char *__itc_dst;
 
-void inline TRUNCATE(char *X);
-
-void inline TRUNC_COPY(char *X, char *Y);
+//void inline TRUNCATE(char *X);
+//void inline TRUNC_COPY(char *X, char *Y);
 //#define TRUNCATE(X) {__ct = (char*)X; __msks = (short*)( &__ct[10]);__mski = (int*)( &__ct[10]); __mski[0]=0; __msks[2]=0;}
 //#define TRUNC_COPY(X, Y) {__itc_src = (char*)X; __itc_dst = (char*)Y; for(__itc=0;__itc<10;__itc++)__itc_dst[__itc] = __itc_src[__itc];}
 #define SUCCESS 0

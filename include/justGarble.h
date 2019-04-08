@@ -33,7 +33,7 @@ typedef struct {
 
 
 typedef struct {
-	long type, id; 
+	long type, id;
 	Wire *input0, *input1, *output;
 } Gate;
 
@@ -95,7 +95,7 @@ typedef block* OutputMap;
 
 
 /*
- * The following are the functions involved in creating, garbling, and 
+ * The following are the functions involved in creating, garbling, and
  * evaluating circuits. Most of the data-structures involved are defined
  * above, and the rest are in other header files.
  */
@@ -110,7 +110,7 @@ int createEmptyCircuit(Circuit *circuit, int n, int m, int q, int r);
 // and GarblingContext, although these steps do not involve any garbling.
 // The reason for this is efficiency. Typically, garbleCircuit is called
 // right after finishBuilding. So, using a GarbledCircuit data-structure
-// here means that there is no need to create and initialize a new 
+// here means that there is no need to create and initialize a new
 // data-structure just before calling garbleCircuit.
 int startBuilding(GarbledCircuit *gc, GarblingContext *ctx);
 int finishBuilding(GarbledCircuit *garbledCircuit,
@@ -126,14 +126,14 @@ int createEmptyGarbledCircuit(GarbledCircuit *garbledCircuit, int n, int m,
 int createInputLabels(InputLabels inputLabels, int n);
 
 //Garble the circuit described in garbledCircuit. For efficiency reasons,
-//we use the garbledCircuit data-structure for representing the input 
-//circuit and the garbled output. The garbling process is non-destructive and 
+//we use the garbledCircuit data-structure for representing the input
+//circuit and the garbled output. The garbling process is non-destructive and
 //only affects the garbledTable member of the GarbledCircuit data-structure.
 //In other words, the same GarbledCircuit object can be reused multiple times,
-//to create multiple garbled circuit copies, 
+//to create multiple garbled circuit copies,
 //by just switching the garbledTable field to a new one. Also, the garbledTable
-//field is the only one that should be sent over the network in the case of an 
-//MPC-type application, as the topology is expected to be avaiable to the 
+//field is the only one that should be sent over the network in the case of an
+//MPC-type application, as the topology is expected to be avaiable to the
 //receiver, and the gate-types are to be hidden away.
 //The inputLabels field is expected to contain 2n fresh input labels, obtained
 //by calling createInputLabels. The outputMap is expected to be a 2m-block sized
@@ -142,19 +142,19 @@ long garbleCircuit(GarbledCircuit *garbledCircuit, InputLabels inputLabels,
 		OutputMap outputMap);
 
 //Evaluate a garbled circuit, using n input labels in the Extracted Labels
-//to return m output labels. The garbled circuit might be generated either in 
+//to return m output labels. The garbled circuit might be generated either in
 //one piece, as the result of running garbleCircuit, or may be pieced together,
-// by building the circuit (startBuilding ... finishBuilding), and adding 
+// by building the circuit (startBuilding ... finishBuilding), and adding
 // garbledTable from another source, say, a network transmission.
 int evaluate(GarbledCircuit *garbledCircuit, ExtractedLabels extractedLabels,
 		OutputMap outputMap);
 
-// A simple function that selects n input labels from 2n labels, using the 
+// A simple function that selects n input labels from 2n labels, using the
 // inputBits array where each element is a bit.
 int extractLabels(ExtractedLabels extractedLabels, InputLabels inputLabels,
 		int* inputBits, int n);
 
-// A simple function that takes 2m output labels, m labels from evaluate, 
+// A simple function that takes 2m output labels, m labels from evaluate,
 // and returns a m bit output by matching the labels. If one or more of the
 // m evaluated labels donot match either of the two corresponding output labels,
 // then the function flags an error.
@@ -169,6 +169,6 @@ int readCircuitFromFile(GarbledCircuit *garbledCircuit, char *fileName);
 #include "garble.h"
 #include "circuits.h"
 #include "check.h"
-#include "util.h"
+#include "jgutil.h"
 
 #endif

@@ -17,12 +17,12 @@
 */
 
 
-#include "../include/garble.h"
-#include "../include/common.h"
-#include "../include/circuits.h"
-#include "../include/gates.h"
-#include "../include/util.h"
-#include "../include/justGarble.h"
+#include "garble.h"
+#include "common.h"
+#include "circuits.h"
+#include "gates.h"
+#include "jgutil.h"
+#include "justGarble.h"
 
 
 int A2X1[8] = { 0x98, 0xF3, 0xF2, 0x48, 0x09, 0x81, 0xA9, 0xFF }, X2A1[8] = {

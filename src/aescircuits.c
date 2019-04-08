@@ -18,11 +18,11 @@
 */
 
 
-#include "../include/garble.h"
-#include "../include/common.h"
-#include "../include/gates.h"
-#include "../include/circuits.h"
-#include "../include/justGarble.h"
+#include "garble.h"
+#include "common.h"
+#include "gates.h"
+#include "circuits.h"
+#include "justGarble.h"
 
 /*******
  * These AES circuits were modeled after the AES circuits of
@@ -143,46 +143,46 @@ int JustineMulGF256(GarbledCircuit* gc, GarblingContext* garblingContext, int* x
   memcpy(out, ret, sizeof(int) * 8);
 }
 //Reference programmatic implementation is in calculate_sbox.rb
-//Takes the multiplicative inverse of whatever input in the Rinjael field, 
+//Takes the multiplicative inverse of whatever input in the Rinjael field,
 //which is actually equal to the number itself ^ 254 power.
 //This is not an optimal implementation, but it is an easy for beginners one
 int JustineMulInverseGF256(GarbledCircuit* gc, GarblingContext* garblingContext, int* x, int* out){
   //x2 = x * x
   int x2[8];
   JustineMulGF256(gc, garblingContext, x, x, x2);
-  
+
   //x3 = x2 * x
-  int x3[8]; 
+  int x3[8];
   JustineMulGF256(gc, garblingContext, x2, x, x3);
-  
+
   //x6 = x3 * x3
   int x6[8];
   JustineMulGF256(gc, garblingContext, x3, x3, x6);
-  
+
   //x12 = x6 * x6
-  int x12[8]; 
+  int x12[8];
   JustineMulGF256(gc, garblingContext, x6, x6, x12);
 
   //x14 = x12 * x2
-  int x14[8]; 
+  int x14[8];
   JustineMulGF256(gc, garblingContext, x12, x2, x14);
-  
+
   //x15 = x12 * x3
-  int x15[8]; 
+  int x15[8];
   JustineMulGF256(gc, garblingContext, x12, x3, x15);
-  
+
   int x30[8];
   JustineMulGF256(gc, garblingContext, x15, x15, x30);
-  
+
   int x60[8];
   JustineMulGF256(gc, garblingContext, x30, x30, x60);
-  
+
   int x120[8];
   JustineMulGF256(gc, garblingContext, x60, x60, x120);
-  
+
   int x240[8];
   JustineMulGF256(gc, garblingContext, x120, x120, x240);
- 
+
   //x254 = output
   JustineMulGF256(gc, garblingContext, x240, x14, out);
   return 0;
@@ -190,7 +190,7 @@ int JustineMulInverseGF256(GarbledCircuit* gc, GarblingContext* garblingContext,
 
 //Affine transformation is mathematician for LOTSA XORs
 int JustineSBoxXOR(GarbledCircuit* gc, GarblingContext* garblingContext, int* x, int* out){
-  
+
   memcpy(out, x, sizeof(int) * 8);
   int i;
   int* b_i = x;
@@ -198,7 +198,7 @@ int JustineSBoxXOR(GarbledCircuit* gc, GarblingContext* garblingContext, int* x,
   int b_i_5[8]; for(i = 0; i < 8; i++) b_i_5[(i + 5) % 8] = b_i[i];
   int b_i_6[8]; for(i = 0; i < 8; i++) b_i_6[(i + 6) % 8] = b_i[i];
   int b_i_7[8]; for(i = 0; i < 8; i++) b_i_7[(i + 7) % 8] = b_i[i];
-  int c[8]; 
+  int c[8];
   c[0] = fixedZeroWire(gc, garblingContext);
   c[1] = fixedOneWire(gc, garblingContext);
   c[2] = fixedOneWire(gc, garblingContext);
@@ -207,18 +207,18 @@ int JustineSBoxXOR(GarbledCircuit* gc, GarblingContext* garblingContext, int* x,
   c[5] = fixedZeroWire(gc, garblingContext);
   c[6] = fixedOneWire(gc, garblingContext);
   c[7] = fixedOneWire(gc, garblingContext);
-   
+
   int xor_in[16];
   int xor_out[8];
-  
+
   memcpy(xor_in, b_i, sizeof(int) * 8);
   memcpy(&(xor_in[8]), b_i_4, sizeof(int) * 8);
   XORCircuit(gc, garblingContext, 16, xor_in, xor_out);
- 
+
   memcpy(xor_in, xor_out, sizeof(int) * 8);
   memcpy(&(xor_in[8]), b_i_5, sizeof(int) * 8);
   XORCircuit(gc, garblingContext, 16, xor_in, xor_out);
- 
+
   memcpy(xor_in, xor_out, sizeof(int) * 8);
   memcpy(&(xor_in[8]), b_i_6, sizeof(int) * 8);
   XORCircuit(gc, garblingContext, 16, xor_in, xor_out);
@@ -986,4 +986,3 @@ int SBOXNOTABLE(GarbledCircuit *garbledCircuit,
   return 0;
 
 }
-

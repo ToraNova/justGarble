@@ -16,10 +16,10 @@
 
 */
 
-#include "../include/garble.h"
-#include "../include/common.h"
-#include "../include/gates.h"
-#include "../include/justGarble.h"
+#include "garble.h"
+#include "common.h"
+#include "gates.h"
+#include "justGarble.h"
 
 int ANDGate(GarbledCircuit *garbledCircuit, GarblingContext *garblingContext,
 		int input0, int input1, int output) {

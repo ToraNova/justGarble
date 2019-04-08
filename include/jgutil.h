@@ -17,7 +17,7 @@
 */
 
 /////////////////////////////////////////////////////////////////////////////
-// The Software is provided "AS IS" and possibly with faults. 
+// The Software is provided "AS IS" and possibly with faults.
 // Intel disclaims any and all warranties and guarantees, express, implied or
 // otherwise, arising, with respect to the software delivered hereunder,
 // including but not limited to the warranty of merchantability, the warranty
@@ -42,8 +42,8 @@
 // Author Kipp Owens, Rajiv Parikh
 ////////////////////////////////////////////////////////////////////////
 
-#ifndef UTIL_H_
-#define UTIL_H_
+#ifndef JGUTIL_H_
+#define JGUTIL_H_
 
 #include "common.h"
 #include "emmintrin.h"
@@ -57,5 +57,20 @@ block randomBlock();
 int median(int A[], int n);
 double doubleMean(double A[], int n);
 void srand_sse(unsigned int seed);
+
+//added by ToraNova chia_jason96@live.com - figure out the source
+void print128_num(block var);
+void printblock_arr(block *il,int size);
+void printtable(block **tp, int ngate);
+void printbin_arr(char *msg,int *t,int size);
+void printint_arr(char *msg, int *t,int start, int size);
+void block2bitstream(block *in, int *out, int in_start,int out_start,int no_blocks);
+void printbitstream(int *target, int block,int size);
+
+
+char *base64_encode(const unsigned char *data,size_t input_length,size_t *output_length);
+
+#define BIGENDHEYO
+void make_uint_array_from_blob(int* dest, unsigned char* blob, u_int32_t bloblen);
 
 #endif /* UTIL_H_ */
