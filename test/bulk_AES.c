@@ -37,11 +37,16 @@ int main() {
   block inputLabels[2 * n];
   block outputMap[2 * m]; //JMS: Change from m to 2 * m
   int inputs[n];
-  int i, j;
+  int i, j, x;
 
   //JMS: Replace timing with check for correctness
   block finalOutput[m];
   block extractedLabels[n];
+  int outputVals[m];
+  int aes_output_int[m];
+
+  AES_KEY key;
+  unsigned char output_aes[16];
 
   //M4K9VgH0xRqf84t6j6nlMg==
   unsigned char userkey[16] = {
@@ -55,52 +60,24 @@ int main() {
 		0x38, 0x39, 0x41, 0x42, 0x43, 0x44, 0x45, 0x01
 	};
 
-  /*
-  //-----------------KEY SETUP-----------------------------------------------
-	block *keysched = (block *) malloc(sizeof(block)*11);//11 round keys
-
-	unsigned char *testchar = (char *) userkey_bcast;
-	block *userkey = (block *) userkey_bcast;
-	size_t outlen;
-	AES_128_Key_Expansion(userkey, keysched);
-	printf("TX Key (base64): %s\n",base64_encode(testchar,16,&outlen));
-	print128_num(*userkey);
-	printf("Keyschedule round keys :\n");
-	printblock_arr(keysched, 11);
-	//-----------------------------------------------------------------------
-
-
-	block *plain = (block *) plaintext;
-	printf("Plaintext (base64): %s\n",base64_encode(plaintext,16,&outlen));
-
-	//first 128bit is from bob, rest is the keyschedule from alice
-	block2bitstream(plain, inputs , 0 ,0 , 1); //128bits from 0-128
-	for(i=1;i<rounds+2;i++){
-		block2bitstream(keysched, inputs,(i-1)*128,i * 128, 1);
-	}
-
-	printf("Inputs:\n");
-	printbitstream(inputs, 12,128);
-  //print input key as well as the keyschedules----------------------------
-  */
+  //evaluation vars
   struct timeval total_start;
   struct timeval total_stop;
   clock_t start,end;
-  double cpu_time_used;
+  double garble_eval_time, rulegen_time;
 
   build_JustineAES(&circuit);
 
   int total_instances = 3000;
 
-  gettimeofday(&total_start, NULL);
   start = clock();
   for(i=0;i<total_instances;i++){
 
     garbleCircuit(&circuit, inputLabels, outputMap);
-    setup_AESInput(inputs, plaintext, userkey, n);
+    setup_AESInput(inputs, plaintext, userkey, &key, n);
     extractLabels(extractedLabels, inputLabels, inputs, n);
     evaluate(&circuit, extractedLabels, finalOutput);
-    int outputVals[m];
+
     memset(outputVals, 0, sizeof(int) * m);
     mapOutputs(outputMap, finalOutput, outputVals, m);
 
@@ -108,13 +85,29 @@ int main() {
   	//printbitstream(outputVals,1,m);
   }
   end = clock();
-  gettimeofday(&total_stop, NULL);
+  garble_eval_time = ((double) (end-start))/ CLOCKS_PER_SEC;
 
-  cpu_time_used = ((double) (end-start))/ CLOCKS_PER_SEC;
+  start = clock();
+  for(i=0;i<total_instances;i++){
+    setup_AESInput(inputs, plaintext, userkey, &key, n);
+    AES_encrypt(plaintext, output_aes, &key);
+    make_uint_array_from_blob(aes_output_int, output_aes, 16);
+  }
+  end = clock();
+  rulegen_time = ((double) (end-start))/ CLOCKS_PER_SEC;
+
+  printf("AES output (ciphertext):\n");
+  printf("Garbled circuit :");
+  for(x = 0; x < 128; x++) printf("%u", outputVals[x]);
+  printf("\n");
+  printf("Vanilla AES     :");
+  for(x = 0; x < 128; x++) printf("%u", aes_output_int[x]);
+  printf("\n\n");
 
   //printf("Total time for %d garbling and eval : %lu us\n", total_instances  ,total_stop.tv_usec - total_start.tv_usec);
   //printf("In seconds : %f\n",(total_stop.tv_usec - total_start.tv_usec) / 1000000.0 );
-  printf("Total time for %d garbling and eval : %f s\n",total_instances,cpu_time_used);
+  printf("Total time for %d AES circuit test :\n Garbling and eval : %f s\n Rulegen : %f s\n",
+    total_instances,garble_eval_time, rulegen_time);
 
   return 0;
 }

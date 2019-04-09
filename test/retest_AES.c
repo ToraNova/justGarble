@@ -43,6 +43,8 @@ int main() {
   block finalOutput[m];
   block extractedLabels[n];
 
+  AES_KEY key;
+
   //M4K9VgH0xRqf84t6j6nlMg==
   unsigned char userkey[16] = {
 		0x33, 0x82, 0xBD, 0x56, 0x01, 0xF4, 0xC5, 0x1A,
@@ -95,7 +97,7 @@ int main() {
   garbleCircuit(&circuit, inputLabels, outputMap);
   gettimeofday(&garble_stop, NULL);
 
-  setup_AESInput(inputs, plaintext, userkey, n);
+  setup_AESInput(inputs, plaintext, userkey, &key, n);
 
   extractLabels(extractedLabels, inputLabels, inputs, n);
 

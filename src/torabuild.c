@@ -81,13 +81,13 @@ void build_JustineAES(GarbledCircuit *buildTarget) {
   writeCircuitToFile(buildTarget,circuitName);
 }
 
-void setup_AESInput(int *setup_target, unsigned char *plaintext, unsigned char *userkey, int n){
-  AES_KEY key;
-  memset(&key, 0, sizeof(key));
-  AES_set_encrypt_key(userkey, 128, &key);
+void setup_AESInput(int *setup_target, unsigned char *plaintext, unsigned char *userkey, AES_KEY *inkey, int n){
+
+  memset(inkey, 0, sizeof(AES_KEY));
+  AES_set_encrypt_key(userkey, 128, inkey);
 
   make_uint_array_from_blob(setup_target, plaintext, 16);
-  unsigned char* blob = &key.rd_key;
+  unsigned char* blob = inkey->rd_key;
 
   //printf("(%u) Input key...", n / 8 / 16);
   make_uint_array_from_blob(setup_target + 128, blob, n/8 - 16);

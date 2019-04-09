@@ -27,7 +27,7 @@ MAINP := $(MAINS:$(MAINDIR)/%.c=$(BINDIR)/%.out) # generate the list of target
 
 IDIR = include
 CC=gcc
-CFLAGS= -O3 -lm -lcrypto -lgnutlsxx -lgnutls -lrt -lpthread -maes -msse4 -lssl -lmsgpackc -lotextension -lencrypto_utils -march=native -I$(IDIR)
+CFLAGS= -O3 -lm -lcrypto -lgnutlsxx -lgnutls -lrt -lpthread -maes -msse4 -lssl -lmsgpackc -march=native -I$(IDIR)
 
 AES = AES_MBDPI
 OT = ot_AES

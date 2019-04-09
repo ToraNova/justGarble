@@ -1,0 +1,5 @@
+you need this :
+https://github.com/msgpack/msgpack-c.git
+
+sudo apt-get install libgnutls28-dev
+sudo apt-get install libssl-dev
