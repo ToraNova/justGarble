@@ -66,9 +66,12 @@ int main() {
   clock_t start,end;
   double garble_eval_time, rulegen_time;
 
+  
+  int total_instances = 3000;
+
   build_JustineAES(&circuit);
 
-  int total_instances = 3000;
+
 
   start = clock();
   for(i=0;i<total_instances;i++){
